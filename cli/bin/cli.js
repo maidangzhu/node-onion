@@ -1,5 +1,9 @@
 #! /usr/bin/env node
 const { program } = require('commander');
+const myHelp = require('../lib/core/help');
+const myCommander = require('../lib/core/myCommander');
 
-program.option('-f --frameworks <framework>', '设置框架');
+myHelp(program);
+myCommander(program);
+
 program.parse(process.argv);
