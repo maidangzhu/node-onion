@@ -1,5 +1,3 @@
-// Router类
-
 const url = require('url')
 const path = require('path')
 
