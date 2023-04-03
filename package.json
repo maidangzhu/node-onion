@@ -16,5 +16,8 @@
     "url": "https://github.com/maidangzhu/node-learning/issues"
   },
   "homepage": "https://github.com/maidangzhu/node-learning#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "handlebars": "^4.7.7"
+  }
 }
