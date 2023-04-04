@@ -1,6 +1,6 @@
 const http = require('http')
 
-const Interceptor = require('./interceptor.js')
+const Interceptor = require('../interceptor.js')
 
 module.exports = class {
   constructor() {
@@ -9,7 +9,7 @@ module.exports = class {
 
     this.server = http.createServer(async (req, res) => {
       console.log('被请求')
-      
+
       await interceptor.run({ req, res }) // 执行注册的拦截函数
       if (!res.writableFinished) {
         let body = res.body || '200 OK'
