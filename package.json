@@ -19,6 +19,7 @@
   "description": "",
   "dependencies": {
     "handlebars": "^4.7.7",
+    "mime": "^3.0.0",
     "sqlite": "^4.1.2",
     "sqlite3": "^5.1.6"
   }
