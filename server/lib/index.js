@@ -49,10 +49,8 @@ app.use(router.get('/', async ({cookies, route, res}, next) => {
     users[id] = 1;
     res.body = '<h1>你好，新用户</h1>';
   }
-  res.setHeader('Set-Cookie', `interceptor_js=${id}; Max-Age=86400`);
-  res.setHeader('Set-Cookie', `interceptor_js=${id}; Path=/`);
-  res.setHeader('Set-Cookie', `interceptor_js=${id}; Path=/foo`);
-  res.setHeader('Set-Cookie', `interceptor_js=${id}; Path=/bar`);
+
+  res.setHeader('Set-Cookie', `interceptor_js=${id}; Domain=junyux.com; Path=/ ; Max-Age=86400; HttpOnly; SameSite=Strict`);
   await next();
 }));
 
