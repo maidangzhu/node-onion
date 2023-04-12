@@ -47,6 +47,7 @@ function route(method, rule, aspect) {
 
     const checked = check(rule, ctx.url.pathname) // 根据路径规则解析路径
 
+    // 如果method命中了，就执行aspect
     if (!ctx.route && (method === '*' || req.method === method)
       && !!checked) {
       ctx.route = checked

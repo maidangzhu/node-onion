@@ -1,6 +1,5 @@
 async function getList(database) {
   return await database.all('SELECT * FROM todo')
-  // return await database.all('SELECT * FROM todo WHERE state <> 2 ORDER BY state DESC')
 }
 
 async function addTask(database, { text, state }) {

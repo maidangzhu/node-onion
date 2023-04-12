@@ -8,6 +8,8 @@ const mime = require('mime')
 
 const { getList } = require('./model/todolist')
 const param = require('./aspect/params')
+const cookie = require('./aspect/cookie')
+const logReq = require('./aspect/logReq')
 const { Server, Router } = require('./interceptor')
 
 const dbFile = path.resolve(__dirname, '../../database/todolist.db')
@@ -16,11 +18,13 @@ let db = null
 const app = new Server()
 const router = new Router()
 
-app.use(async ({ req }, next) => {
-  console.log(`${req.method} ${req.url}`)
-  await next()
-})
+app.use(logReq)
+app.use(param)
+app.use(cookie)
 
+const users = {}
+
+// 数据库连接
 app.use(async (ctx, next) => {
   if (!db) {
     db = await open({
@@ -33,7 +37,24 @@ app.use(async (ctx, next) => {
   await next()
 })
 
-app.use(param)
+app.use(router.get('/', async ({cookies, route, res}, next) => {
+  res.setHeader('Content-Type', 'text/html;charset=utf-8');
+  let id = cookies.interceptor_js;
+  if(id) {
+    users[id] = users[id] || 1;
+    users[id]++;
+    res.body = `<h1>你好，欢迎第${users[id]}次访问本站</h1>`;
+  } else {
+    id = Math.random().toString(36).slice(2);
+    users[id] = 1;
+    res.body = '<h1>你好，新用户</h1>';
+  }
+  res.setHeader('Set-Cookie', `interceptor_js=${id}; Max-Age=86400`);
+  res.setHeader('Set-Cookie', `interceptor_js=${id}; Path=/`);
+  res.setHeader('Set-Cookie', `interceptor_js=${id}; Path=/foo`);
+  res.setHeader('Set-Cookie', `interceptor_js=${id}; Path=/bar`);
+  await next();
+}));
 
 app.use(router.post('/add', async ({ database, params, res }, next) => {
   res.setHeader('Content-Type', 'application/json')
