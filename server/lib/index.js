@@ -37,22 +37,41 @@ app.use(async (ctx, next) => {
   await next()
 })
 
-app.use(router.get('/', async ({cookies, route, res}, next) => {
-  res.setHeader('Content-Type', 'text/html;charset=utf-8');
-  let id = cookies.interceptor_js;
-  if(id) {
-    users[id] = users[id] || 1;
-    users[id]++;
-    res.body = `<h1>你好，欢迎第${users[id]}次访问本站</h1>`;
+// 每次用户请求服务器，服务器都为该用户更新他的 Cookie
+app.use(async ({ cookies, res }, next) => {
+  let id = cookies.interceptor_js
+  if (!id) {
+    id = Math.random().toString(36).slice(2)
+  }
+  res.setHeader('Set-Cookie', `interceptor_js=${id}; Path=/; Max-Age=${7 * 86400}`) // 设置cookie的有效时长一周
+  await next()
+})
+
+app.use(router.get('/', async ({ cookies, route, res }, next) => {
+  res.setHeader('Content-Type', 'text/html;charset=utf-8')
+  let id = cookies.interceptor_js
+  if (id) {
+    users[id] = users[id] || 1
+    users[id]++
+    res.body = `<h1>你好，欢迎第${users[id]}次访问本站</h1>`
   } else {
-    id = Math.random().toString(36).slice(2);
-    users[id] = 1;
-    res.body = '<h1>你好，新用户</h1>';
+    id = Math.random().toString(36).slice(2)
+    users[id] = 1
+    res.body = '<h1>你好，新用户</h1>'
   }
 
-  res.setHeader('Set-Cookie', `interceptor_js=${id}; Domain=junyux.com; Path=/ ; Max-Age=86400; HttpOnly; SameSite=Strict`);
-  await next();
-}));
+  res.setHeader('Set-Cookie', `interceptor_js=${id}; Domain=junyux.com; Path=/ ; Max-Age=86400; HttpOnly; SameSite=Strict`)
+  await next()
+}))
+
+app.use(router.post('/login', async (ctx, next) => {
+  const { database, params, res } = ctx
+  res.setHeader('Content-Type', 'application/json')
+  const { login } = require('./model/user')
+  const result = await login(database, ctx, params)
+  res.body = result || { err: 'invalid user' }
+  await next()
+}))
 
 app.use(router.post('/add', async ({ database, params, res }, next) => {
   res.setHeader('Content-Type', 'application/json')
