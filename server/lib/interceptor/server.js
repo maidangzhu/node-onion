@@ -2,7 +2,7 @@ const http = require('http')
 
 const Interceptor = require('./interceptor.js')
 
-module.exports = class {
+class Server {
   constructor() {
     console.log('启动了')
     const interceptor = new Interceptor()
@@ -44,3 +44,5 @@ module.exports = class {
     return this.interceptor.use(aspect)
   }
 }
+
+module.exports = Server
